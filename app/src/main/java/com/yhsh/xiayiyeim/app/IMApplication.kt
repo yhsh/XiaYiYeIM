@@ -1,7 +1,9 @@
-package com.yhsh.xiayiyeim.presenter
+package com.yhsh.xiayiyeim.app
 
+import android.app.Application
 import com.hyphenate.chat.EMClient
-import com.yhsh.xiayiyeim.contract.SplashContract
+import com.hyphenate.chat.EMOptions
+import com.yhsh.xiayiyeim.BuildConfig
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -32,20 +34,20 @@ import com.yhsh.xiayiyeim.contract.SplashContract
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/23 16:44
+ * 创建时间：2019/12/23 17:18
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim.presenter
+ * 文件包名：com.yhsh.xiayiyeim.app
  * 文件说明：
  */
-class SplashPresenter(private val splashView: SplashContract.View) : SplashContract.Presenter {
-    override fun checkLoginStatus() {
-        if (isLoggedIn()) splashView.onLoggedIn() else splashView.onNotLoggedIn()
+class IMApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        //初始化环信配置
+        EMClient.getInstance().init(applicationContext, EMOptions())
+        EMClient.getInstance().setDebugMode(BuildConfig.DEBUG)
     }
-
-    private fun isLoggedIn(): Boolean =
-        EMClient.getInstance().isConnected && EMClient.getInstance().isLoggedInBefore
 }
