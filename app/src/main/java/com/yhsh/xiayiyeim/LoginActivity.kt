@@ -1,5 +1,11 @@
 package com.yhsh.xiayiyeim
 
+import com.yhsh.xiayiyeim.contract.LoginContract
+import com.yhsh.xiayiyeim.presenter.LoginPresenter
+import kotlinx.android.synthetic.main.activity_login.*
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
+
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
  * #                                                   #
@@ -38,6 +44,42 @@ package com.yhsh.xiayiyeim
  * 文件包名：com.yhsh.xiayiyeim
  * 文件说明：登录页面
  */
-class LoginActivity : BaseActivity() {
+class LoginActivity : BaseActivity(), LoginContract.View {
+    val loginPresenter by lazy { LoginPresenter(this) }
+
     override fun getLayoutResId(): Int = R.layout.activity_login
+    override fun init() {
+        super.init()
+    }
+
+    override fun onUserNameError() {
+        userName.error = getString(R.string.user_name_error)
+    }
+
+    override fun onPasswordError() {
+        password.error = getString(R.string.password_error)
+    }
+
+    override fun onStartLogin() {
+        //隐藏进度条
+        showProgress(getString(R.string.logging))
+
+    }
+
+    override fun onLoggedSuccess() {
+        //隐藏进度条
+        dismissProgress()
+        //进入主页面
+        startActivity<MainActivity>()
+        //关闭登录页面
+        finish()
+    }
+
+    override fun onLoggedFail() {
+        //隐藏进度条
+        dismissProgress()
+        //弹出失败信息
+        toast(getString(R.string.login_failed))
+    }
+
 }

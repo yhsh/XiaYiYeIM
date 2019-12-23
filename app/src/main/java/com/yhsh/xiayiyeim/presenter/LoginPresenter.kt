@@ -1,8 +1,6 @@
-package com.yhsh.xiayiyeim
+package com.yhsh.xiayiyeim.presenter
 
-import android.app.ProgressDialog
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.yhsh.xiayiyeim.contract.LoginContract
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -33,41 +31,17 @@ import androidx.appcompat.app.AppCompatActivity
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/23 15:57
+ * 创建时间：2019/12/23 17:34
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim
- * 文件说明：所有activity的基类
+ * 文件包名：com.yhsh.xiayiyeim.presenter
+ * 文件说明：
  */
-abstract class BaseActivity : AppCompatActivity() {
-    private val progressDialog by lazy { ProgressDialog(this) }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(getLayoutResId())
-        init()
-    }
+class LoginPresenter(val loginView: LoginContract.View) : LoginContract.Presenter {
+    override fun login(userName: String, password: String) {
 
-    open fun init() {
-
-    }
-
-    //子类必须实现这个加载布局的方法
-    abstract fun getLayoutResId(): Int
-
-    /**
-     * 显示进度条
-     */
-    fun showProgress(msg: String) {
-        progressDialog.setMessage(msg)
-    }
-
-    /**
-     * 隐藏进度条
-     */
-    fun dismissProgress() {
-        progressDialog.dismiss()
     }
 }
