@@ -7,8 +7,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
-    <style name="AppTheme.FullScreen" parent="AppTheme">
+    <!--SplashActivity页面全屏的主题配置-->
+    <style name="Kotlin.FullScreen" parent="AppTheme">
         <item name="android:windowFullscreen">true</item>
     </style>
 
