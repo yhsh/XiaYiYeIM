@@ -1,10 +1,6 @@
-package com.yhsh.xiayiyeim
+package com.yhsh.xiayiyeim.presenter
 
-import android.os.Handler
-import android.os.Looper
 import com.yhsh.xiayiyeim.contract.SplashContract
-import com.yhsh.xiayiyeim.presenter.SplashPresenter
-import org.jetbrains.anko.startActivity
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -35,41 +31,19 @@ import org.jetbrains.anko.startActivity
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/23 16:12
+ * 创建时间：2019/12/23 16:44
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim
- * 文件说明：打开APP的第一个页面(闪屏页)
+ * 文件包名：com.yhsh.xiayiyeim.presenter
+ * 文件说明：
  */
-class SplashActivity : BaseActivity(), SplashContract.View {
-    private val handler by lazy { Handler(Looper.getMainLooper()) }
-    private val splashPresenter = SplashPresenter(this)
-
-    companion object {
-        const val DELAYED = 2000L
+class SplashPresenter(private val splashView: SplashContract.View) : SplashContract.Presenter {
+    override fun checkLoginStatus() {
+        if (isLoggedIn()) splashView.onLoggedIn() else splashView.onNotLoggedIn()
     }
 
-    override fun getLayoutResId(): Int = R.layout.activity_splash
-
-    override fun init() {
-        //检查登录状态
-        splashPresenter.checkLoginStatus()
-    }
-
-    override fun onNotLoggedIn() {
-        //未登录，延迟2秒跳转到登录页面
-        handler.postDelayed({
-            startActivity<LoginActivity>()
-            finish()
-        }, DELAYED)
-    }
-
-    override fun onLoggedIn() {
-        //跳转到主页面
-        startActivity<MainActivity>()
-        finish()
-    }
+    private fun isLoggedIn(): Boolean = false
 }
