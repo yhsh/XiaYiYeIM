@@ -11,17 +11,17 @@ import com.yhsh.xiayiyeim.R
 import org.jetbrains.anko.sp
 
 /**
- * 黑马程序员
+ * 下一页5
  */
 class SlideBar(context: Context?, attrs: AttributeSet? = null) : View(context, attrs) {
 
-    var sectionHeight = 0f;
+    private var sectionHeight = 0f;
 
-    var paint = Paint()
+    private var paint = Paint()
 
-    var textBaseline = 0f
+    private var textBaseline = 0f
 
-    var onSectionChangeListener: OnSectionChangeListener? = null
+    private var onSectionChangeListener: OnSectionChangeListener? = null
 
     companion object {
         private val SECTIONS = arrayOf(

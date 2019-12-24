@@ -1,7 +1,12 @@
 package com.yhsh.xiayiyeim.ui.fragment
 
+import android.view.View
 import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.ui.activity.BaseActivity
+import kotlinx.android.synthetic.main.fragment_contacts.*
+import kotlinx.android.synthetic.main.header.*
+import kotlinx.android.synthetic.main.header.add
+import kotlinx.android.synthetic.main.view_add_friend_item.*
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -45,5 +50,11 @@ class ContactFragment : BaseFragment() {
     override fun getLayoutResId(): Int = R.layout.fragment_contacts
     override fun init() {
         super.init()
+        headerTitle.text = getString(R.string.contact)
+        add.visibility = View.VISIBLE
+        swipeRefreshLayout.apply {
+            setColorSchemeResources(R.color.qq_blue, R.color.colorAccent, R.color.qq_red_dark)
+            isRefreshing = true
+        }
     }
 }

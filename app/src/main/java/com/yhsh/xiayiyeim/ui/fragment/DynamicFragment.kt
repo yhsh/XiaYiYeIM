@@ -1,7 +1,13 @@
 package com.yhsh.xiayiyeim.ui.fragment
 
+import com.hyphenate.chat.EMClient
 import com.yhsh.xiayiyeim.R
-import com.yhsh.xiayiyeim.ui.activity.BaseActivity
+import com.yhsh.xiayiyeim.adapter.EMCallBackAdapter
+import com.yhsh.xiayiyeim.ui.activity.LoginActivity
+import kotlinx.android.synthetic.main.fragment_dynamic.*
+import kotlinx.android.synthetic.main.header.*
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -45,5 +51,27 @@ class DynamicFragment : BaseFragment() {
     override fun getLayoutResId(): Int = R.layout.fragment_dynamic
     override fun init() {
         super.init()
+        headerTitle.text = getString(R.string.dynamic)
+        logout.text = String.format(getString(R.string.logout, EMClient.getInstance().currentUser))
+        logout.setOnClickListener { logoutStart() }
+    }
+
+    /**
+     * 推出登录的方法
+     */
+    private fun logoutStart() {
+        EMClient.getInstance().logout(true, object : EMCallBackAdapter() {
+            override fun onSuccess() {
+                activity?.runOnUiThread {
+                    activity?.toast(R.string.logout_success)
+                    activity?.startActivity<LoginActivity>()
+                    activity?.finish()
+                }
+            }
+
+            override fun onError(p0: Int, p1: String?) {
+                activity?.runOnUiThread { context?.toast(R.string.logout_failed) }
+            }
+        })
     }
 }
