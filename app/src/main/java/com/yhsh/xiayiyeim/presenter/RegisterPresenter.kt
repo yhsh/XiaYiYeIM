@@ -47,12 +47,11 @@ class RegisterPresenter(private val registerView: RegisterContract.View) :
     override fun register(username: String, password: String, confirmPassword: String) {
         if (username.isValidUserName()) {
             if (password.isValidPassword()) {
-                if (confirmPassword.isValidPassword()) {
-                    if (password == confirmPassword) {
-                        registerView.startRegister()
-                        //注册环信
-                        registerEaseMob(username, password, confirmPassword)
-                    }
+                //两个密码一致才可以登录
+                if (password == confirmPassword) {
+                    registerView.startRegister()
+                    //注册环信
+                    registerEaseMob(username, password, confirmPassword)
                 } else registerView.confirmPasswordError()
             } else registerView.passwordError()
         } else registerView.userNameError()

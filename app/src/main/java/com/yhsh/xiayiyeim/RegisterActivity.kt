@@ -1,5 +1,7 @@
 package com.yhsh.xiayiyeim
 
+import android.view.KeyEvent
+import android.widget.TextView
 import com.yhsh.xiayiyeim.contract.RegisterContract
 import com.yhsh.xiayiyeim.presenter.RegisterPresenter
 import kotlinx.android.synthetic.main.activity_register.*
@@ -44,17 +46,27 @@ import org.jetbrains.anko.toast
  * 文件说明：注册页面
  */
 class RegisterActivity : BaseActivity(), RegisterContract.View {
-    val registerPresenter by lazy { RegisterPresenter(this) }
+    private val registerPresenter by lazy { RegisterPresenter(this) }
     override fun getLayoutResId(): Int = R.layout.activity_register
     override fun init() {
         super.init()
         register.setOnClickListener {
-            registerPresenter.register(
-                userName.text.trim().toString(),
-                password.text.trim().toString(),
-                confirmPassword.text.trim().toString()
-            )
+            register()
         }
+        confirmPassword.setOnEditorActionListener { v, actionId, event ->
+            //隐藏软键盘
+            hideMethodKeyboard()
+            register()
+            true
+        }
+    }
+
+    private fun register() {
+        registerPresenter.register(
+            userName.text.trim().toString(),
+            password.text.trim().toString(),
+            confirmPassword.text.trim().toString()
+        )
     }
 
     override fun userNameError() {
