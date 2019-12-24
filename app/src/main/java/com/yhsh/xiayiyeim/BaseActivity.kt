@@ -1,7 +1,9 @@
 package com.yhsh.xiayiyeim
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 
 /*
@@ -43,6 +45,7 @@ import androidx.appcompat.app.AppCompatActivity
  * 文件说明：所有activity的基类
  */
 abstract class BaseActivity : AppCompatActivity() {
+    val inputMethodManager by lazy { getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager }
     private val progressDialog by lazy { ProgressDialog(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +53,7 @@ abstract class BaseActivity : AppCompatActivity() {
         init()
     }
 
+    //子类可覆写此方法进行相关的操作
     open fun init() {
 
     }
@@ -62,6 +66,8 @@ abstract class BaseActivity : AppCompatActivity() {
      */
     fun showProgress(msg: String) {
         progressDialog.setMessage(msg)
+        progressDialog.setCancelable(false)
+        progressDialog.show()
     }
 
     /**
@@ -69,5 +75,10 @@ abstract class BaseActivity : AppCompatActivity() {
      */
     fun dismissProgress() {
         progressDialog.dismiss()
+    }
+
+    //隐藏键盘的方法
+    fun hideMethodKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 }

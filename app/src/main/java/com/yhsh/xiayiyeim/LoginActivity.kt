@@ -59,6 +59,8 @@ class LoginActivity : BaseActivity(), LoginContract.View {
 
     //点击登录按钮登录的方法
     private fun login() {
+        //隐藏键盘
+        hideMethodKeyboard()
         loginPresenter.login(userName.text.trim().toString(), password.text.trim().toString())
     }
 
@@ -73,7 +75,6 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     override fun onStartLogin() {
         //隐藏进度条
         showProgress(getString(R.string.logging))
-
     }
 
     override fun onLoggedSuccess() {

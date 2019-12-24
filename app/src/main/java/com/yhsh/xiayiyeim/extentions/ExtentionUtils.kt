@@ -47,5 +47,5 @@ package com.yhsh.xiayiyeim.extentions
     /**
      * 密码是否可用
      */
-    fun String.isValidPassword(): Boolean = this.matches(Regex("^[0,9]{3,20}$"))
+    fun String.isValidPassword(): Boolean = this.matches(Regex("^[0-9]{3,20}$"))
 //}

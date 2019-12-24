@@ -1,5 +1,8 @@
 package com.yhsh.xiayiyeim.contract
 
+import android.os.Handler
+import android.os.Looper
+
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
  * #                                                   #
@@ -38,4 +41,15 @@ package com.yhsh.xiayiyeim.contract
  * 文件包名：com.yhsh.xiayiyeim.contract
  * 文件说明：所有persenter的基类
  */
-interface BasePresenter
+interface BasePresenter {
+    companion object {
+        val handler by lazy { Handler(Looper.getMainLooper()) }
+    }
+
+    /**
+     * 开启主线程的方法
+     */
+    fun uiThread(f: () -> Unit) {
+        handler.post { f() }
+    }
+}
