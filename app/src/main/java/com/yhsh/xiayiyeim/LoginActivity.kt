@@ -1,5 +1,8 @@
 package com.yhsh.xiayiyeim
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import com.yhsh.xiayiyeim.contract.LoginContract
 import com.yhsh.xiayiyeim.presenter.LoginPresenter
 import kotlinx.android.synthetic.main.activity_login.*
@@ -61,7 +64,37 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     private fun login() {
         //隐藏键盘
         hideMethodKeyboard()
-        loginPresenter.login(userName.text.trim().toString(), password.text.trim().toString())
+        //检查是否又写入SD卡权限的方法
+        if (hasWriteExternalStoragePermission()) {
+            loginPresenter.login(userName.text.trim().toString(), password.text.trim().toString())
+        } else {
+            //请求权限
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            //申请同意了
+            login()
+        } else {
+            //申请拒绝了
+            toast(R.string.permission_denied)
+        }
+    }
+
+    private fun hasWriteExternalStoragePermission(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onUserNameError() {
