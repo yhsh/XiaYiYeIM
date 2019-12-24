@@ -1,8 +1,4 @@
-package com.yhsh.xiayiyeim.presenter
-
-import com.yhsh.xiayiyeim.contract.LoginContract
-import com.yhsh.xiayiyeim.extentions.isValidPassword
-import com.yhsh.xiayiyeim.extentions.isValidUserName
+package com.yhsh.xiayiyeim.extentions
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -33,29 +29,23 @@ import com.yhsh.xiayiyeim.extentions.isValidUserName
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/23 17:34
+ * 创建时间：2019/12/24 11:58
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim.presenter
+ * 文件包名：com.yhsh.xiayiyeim.extentions
  * 文件说明：
  */
-class LoginPresenter(private val loginView: LoginContract.View) : LoginContract.Presenter {
-    override fun login(userName: String, password: String) {
-        if (userName.isValidUserName()) {
-            //用户名合法
-            if (password.isValidPassword()) {
-                //密码合法，开启登录
-                loginView.onStartLogin()
-                //登录环信
-                loginEaseMob(userName, password)
-            } else loginView.onPasswordError()
-        } else loginView.onUserNameError()
-    }
+//class ExtentionUtils {
+    /**
+     * 用户名是否可用
+     */
+    fun String.isValidUserName(): Boolean = this.matches(Regex("^[a-zA-Z]\\w{2,19}$"))
 
-    private fun loginEaseMob(userName: String, password: String) {
-
-    }
-}
+    /**
+     * 密码是否可用
+     */
+    fun String.isValidPassword(): Boolean = this.matches(Regex("^[0,9]{3,20}$"))
+//}

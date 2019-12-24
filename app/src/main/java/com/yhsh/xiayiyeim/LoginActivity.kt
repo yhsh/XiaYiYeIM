@@ -45,11 +45,21 @@ import org.jetbrains.anko.toast
  * 文件说明：登录页面
  */
 class LoginActivity : BaseActivity(), LoginContract.View {
-    val loginPresenter by lazy { LoginPresenter(this) }
+    private val loginPresenter by lazy { LoginPresenter(this) }
 
     override fun getLayoutResId(): Int = R.layout.activity_login
     override fun init() {
         super.init()
+        login.setOnClickListener { login() }
+        password.setOnEditorActionListener { v, actionId, event ->
+            login()
+            true
+        }
+    }
+
+    //点击登录按钮登录的方法
+    private fun login() {
+        loginPresenter.login(userName.text.trim().toString(), password.text.trim().toString())
     }
 
     override fun onUserNameError() {
