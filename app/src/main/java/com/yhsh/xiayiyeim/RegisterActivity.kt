@@ -44,6 +44,7 @@ import org.jetbrains.anko.toast
  * 文件说明：注册页面
  */
 class RegisterActivity : BaseActivity(), RegisterContract.View {
+
     private val registerPresenter by lazy { RegisterPresenter(this) }
     override fun getLayoutResId(): Int = R.layout.activity_register
     override fun init() {
@@ -87,6 +88,7 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
     override fun onRegisterSuccess() {
         //隐藏进度条
         dismissProgress()
+        toast(R.string.register_success)
         finish()
     }
 
@@ -94,5 +96,12 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
         //隐藏进度条
         dismissProgress()
         toast(R.string.register_failed)
+    }
+
+    override fun userNameExist() {
+        //隐藏进度条
+        dismissProgress()
+        //用户已存在
+        toast(R.string.user_already_exist)
     }
 }

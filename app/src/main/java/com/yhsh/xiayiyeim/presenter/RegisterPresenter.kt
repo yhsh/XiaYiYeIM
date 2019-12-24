@@ -3,9 +3,13 @@ package com.yhsh.xiayiyeim.presenter
 import cn.bmob.v3.BmobUser
 import cn.bmob.v3.exception.BmobException
 import cn.bmob.v3.listener.SaveListener
+import com.hyphenate.chat.EMClient
+import com.hyphenate.exceptions.HyphenateException
 import com.yhsh.xiayiyeim.contract.RegisterContract
 import com.yhsh.xiayiyeim.extentions.isValidPassword
 import com.yhsh.xiayiyeim.extentions.isValidUserName
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -67,11 +71,33 @@ class RegisterPresenter(private val registerView: RegisterContract.View) :
         userBmob.signUp<BmobUser>(object : SaveListener<BmobUser>() {
             override fun done(p0: BmobUser?, p1: BmobException?) {
                 if (null == p1) {
-                    //注册成功
-                    registerView.onRegisterSuccess()
+                    //注册成功后再注册到环信后台服务器
+                    registerEMClient(userName, password)
                 } else {
                     //注册失败
                     registerView.onRegisterFail()
+                }
+            }
+
+            private fun registerEMClient(userName: String, password: String) {
+                //同步方法需要放到子线程
+                doAsync {
+                    try {
+                        EMClient.getInstance().createAccount(userName, password)
+                        uiThread {
+                            //主线程回调成功结果
+                            registerView.onRegisterSuccess()
+                        }
+                    } catch (e: HyphenateException) {
+                        uiThread {
+                            if (e.errorCode == 202) {
+                                //账号已存在
+                                registerView.userNameExist()
+                            } else
+                            //主线程回调失败的方法
+                                registerView.onRegisterFail()
+                        }
+                    }
                 }
             }
 

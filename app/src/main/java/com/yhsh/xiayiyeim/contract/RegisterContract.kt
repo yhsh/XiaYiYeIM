@@ -62,5 +62,8 @@ interface RegisterContract {
 
         //注册失败
         fun onRegisterFail()
+
+        //注册用户已存在
+        fun userNameExist()
     }
 }
