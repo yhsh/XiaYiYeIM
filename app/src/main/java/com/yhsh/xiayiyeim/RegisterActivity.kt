@@ -1,7 +1,5 @@
 package com.yhsh.xiayiyeim
 
-import android.view.KeyEvent
-import android.widget.TextView
 import com.yhsh.xiayiyeim.contract.RegisterContract
 import com.yhsh.xiayiyeim.presenter.RegisterPresenter
 import kotlinx.android.synthetic.main.activity_register.*

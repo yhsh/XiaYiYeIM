@@ -1,6 +1,7 @@
 package com.yhsh.xiayiyeim.app
 
 import android.app.Application
+import cn.bmob.v3.Bmob
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMOptions
 import com.yhsh.xiayiyeim.BuildConfig
@@ -46,6 +47,7 @@ import com.yhsh.xiayiyeim.BuildConfig
 class IMApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        Bmob.initialize(applicationContext,"c9034ef5d3355801a54b23d877977607")
         //初始化环信配置
         EMClient.getInstance().init(applicationContext, EMOptions())
         EMClient.getInstance().setDebugMode(BuildConfig.DEBUG)

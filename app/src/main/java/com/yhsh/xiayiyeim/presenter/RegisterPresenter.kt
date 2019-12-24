@@ -1,5 +1,8 @@
 package com.yhsh.xiayiyeim.presenter
 
+import cn.bmob.v3.BmobUser
+import cn.bmob.v3.exception.BmobException
+import cn.bmob.v3.listener.SaveListener
 import com.yhsh.xiayiyeim.contract.RegisterContract
 import com.yhsh.xiayiyeim.extentions.isValidPassword
 import com.yhsh.xiayiyeim.extentions.isValidUserName
@@ -50,14 +53,28 @@ class RegisterPresenter(private val registerView: RegisterContract.View) :
                 //两个密码一致才可以登录
                 if (password == confirmPassword) {
                     registerView.startRegister()
-                    //注册环信
-                    registerEaseMob(username, password, confirmPassword)
+                    //注册Bmob
+                    registerBmob(username, password)
                 } else registerView.confirmPasswordError()
             } else registerView.passwordError()
         } else registerView.userNameError()
     }
 
-    private fun registerEaseMob(userName: String, password: String, confirmPassword: String) {
+    private fun registerBmob(userName: String, password: String) {
+        val userBmob = BmobUser()
+        userBmob.username = userName
+        userBmob.setPassword(password)
+        userBmob.signUp<BmobUser>(object : SaveListener<BmobUser>() {
+            override fun done(p0: BmobUser?, p1: BmobException?) {
+                if (null == p1) {
+                    //注册成功
+                    registerView.onRegisterSuccess()
+                } else {
+                    //注册失败
+                    registerView.onRegisterFail()
+                }
+            }
 
+        })
     }
 }
