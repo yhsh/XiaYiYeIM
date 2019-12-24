@@ -1,10 +1,4 @@
-package com.yhsh.xiayiyeim
-
-import android.app.ProgressDialog
-import android.content.Context
-import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
+package com.yhsh.xiayiyeim.contract
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -35,50 +29,38 @@ import androidx.appcompat.app.AppCompatActivity
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/23 15:57
+ * 创建时间：2019/12/24 14:23
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim
- * 文件说明：所有activity的基类
+ * 文件包名：com.yhsh.xiayiyeim.contract
+ * 文件说明：
  */
-abstract class BaseActivity : AppCompatActivity() {
-    private val inputMethodManager by lazy { getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager }
-    private val progressDialog by lazy { ProgressDialog(this) }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(getLayoutResId())
-        init()
+interface RegisterContract {
+    interface Presenter {
+        //用户名,密码,确认密码
+        fun register(username: String, password: String, confirmPassword: String)
     }
 
-    //子类可覆写此方法进行相关的操作
-    open fun init() {
+    interface View {
+        //用户名不正确
+        fun userNameError()
 
-    }
+        //密码不正确
+        fun passwordError()
 
-    //子类必须实现这个加载布局的方法
-    abstract fun getLayoutResId(): Int
+        //确认密码不正确
+        fun confirmPasswordError()
 
-    /**
-     * 显示进度条
-     */
-    fun showProgress(msg: String) {
-        progressDialog.setMessage(msg)
-        progressDialog.setCancelable(false)
-        progressDialog.show()
-    }
+        //开始注册
+        fun startRegister()
 
-    /**
-     * 隐藏进度条
-     */
-    fun dismissProgress() {
-        progressDialog.dismiss()
-    }
+        //注册成功
+        fun onRegisterSuccess()
 
-    //隐藏键盘的方法
-    fun hideMethodKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        //注册失败
+        fun onRegisterFail()
     }
 }

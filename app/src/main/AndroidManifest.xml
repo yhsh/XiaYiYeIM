@@ -37,6 +37,7 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".RegisterActivity" />
 
         <!-- 设置环信应用的AppKey -->
         <meta-data

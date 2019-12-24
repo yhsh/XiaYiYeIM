@@ -53,6 +53,8 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     override fun getLayoutResId(): Int = R.layout.activity_login
     override fun init() {
         super.init()
+        //注册按钮的监听
+        newUser.setOnClickListener { startActivity<RegisterActivity>() }
         login.setOnClickListener { login() }
         password.setOnEditorActionListener { v, actionId, event ->
             login()
