@@ -1,10 +1,11 @@
-package com.yhsh.xiayiyeim
+package com.yhsh.xiayiyeim.ui.activity
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import android.os.Handler
+import android.os.Looper
+import com.yhsh.xiayiyeim.R
+import com.yhsh.xiayiyeim.contract.SplashContract
+import com.yhsh.xiayiyeim.presenter.SplashPresenter
+import org.jetbrains.anko.startActivity
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -35,33 +36,41 @@ import androidx.fragment.app.Fragment
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/23 16:01
+ * 创建时间：2019/12/23 16:12
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
  * 文件包名：com.yhsh.xiayiyeim
- * 文件说明：所有fragment的基类
+ * 文件说明：打开APP的第一个页面(闪屏页)
  */
-abstract class BaseFragment : Fragment() {
+class SplashActivity : BaseActivity(), SplashContract.View {
+    private val handler by lazy { Handler(Looper.getMainLooper()) }
+    private val splashPresenter = SplashPresenter(this)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(getLayoutResId(), null)
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        init()
+    companion object {
+        const val DELAYED = 2000L
     }
 
-    open fun init() {
-        //初始化公共功能，子类也可以覆写此方法
+    override fun getLayoutResId(): Int = R.layout.activity_splash
+
+    override fun init() {
+        //检查登录状态
+        splashPresenter.checkLoginStatus()
     }
 
-    //所有fragment必须要实现的加载布局的方法
-    abstract fun getLayoutResId(): Int
+    override fun onNotLoggedIn() {
+        //未登录，延迟2秒跳转到登录页面
+        handler.postDelayed({
+            startActivity<LoginActivity>()
+            finish()
+        }, DELAYED)
+    }
 
+    override fun onLoggedIn() {
+        //跳转到主页面
+        startActivity<MainActivity>()
+        finish()
+    }
 }

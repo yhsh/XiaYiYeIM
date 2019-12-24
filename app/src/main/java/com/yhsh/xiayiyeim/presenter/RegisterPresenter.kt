@@ -9,7 +9,6 @@ import com.yhsh.xiayiyeim.contract.RegisterContract
 import com.yhsh.xiayiyeim.extentions.isValidPassword
 import com.yhsh.xiayiyeim.extentions.isValidUserName
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -74,8 +73,10 @@ class RegisterPresenter(private val registerView: RegisterContract.View) :
                     //注册成功后再注册到环信后台服务器
                     registerEMClient(userName, password)
                 } else {
-                    //注册失败
-                    registerView.onRegisterFail()
+                    if (p1.errorCode == 202) {
+                        //账号已存在
+                        registerView.userNameExist()
+                    } else registerView.onRegisterFail()
                 }
             }
 
@@ -90,12 +91,8 @@ class RegisterPresenter(private val registerView: RegisterContract.View) :
                         }
                     } catch (e: HyphenateException) {
                         uiThread {
-                            if (e.errorCode == 202) {
-                                //账号已存在
-                                registerView.userNameExist()
-                            } else
                             //主线程回调失败的方法
-                                registerView.onRegisterFail()
+                            registerView.onRegisterFail()
                         }
                     }
                 }

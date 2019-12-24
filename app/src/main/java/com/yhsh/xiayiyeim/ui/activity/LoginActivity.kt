@@ -1,8 +1,9 @@
-package com.yhsh.xiayiyeim
+package com.yhsh.xiayiyeim.ui.activity
 
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.contract.LoginContract
 import com.yhsh.xiayiyeim.presenter.LoginPresenter
 import kotlinx.android.synthetic.main.activity_login.*

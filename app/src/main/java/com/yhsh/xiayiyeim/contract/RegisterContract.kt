@@ -39,7 +39,7 @@ package com.yhsh.xiayiyeim.contract
  * 文件说明：
  */
 interface RegisterContract {
-    interface Presenter {
+    interface Presenter : BasePresenter {
         //用户名,密码,确认密码
         fun register(username: String, password: String, confirmPassword: String)
     }

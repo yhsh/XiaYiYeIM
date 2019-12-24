@@ -1,5 +1,6 @@
-package com.yhsh.xiayiyeim
+package com.yhsh.xiayiyeim.ui.activity
 
+import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.contract.RegisterContract
 import com.yhsh.xiayiyeim.presenter.RegisterPresenter
 import kotlinx.android.synthetic.main.activity_register.*
