@@ -2,15 +2,17 @@ package com.yhsh.xiayiyeim.adapter
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.hyphenate.chat.EMClient
 import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.data.ContactListItem
 import com.yhsh.xiayiyeim.ui.activity.ChatActivity
 import com.yhsh.xiayiyeim.widget.ContactListItemView
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -81,19 +83,28 @@ class ContactListAdapter(
                     userName
                 )
             ).setTitle(context.getString(R.string.delete_friend_title))
-                .setPositiveButton(context.getString(R.string.cancel), null)
-                .setNegativeButton(
+                .setNegativeButton(context.getString(R.string.cancel), null)
+                .setPositiveButton(
                     context.getString(R.string.confirm)
                 ) { dialog, which ->
-                    deleteFriend(dialog)
+                    deleteFriend(userName)
                 }.show()
             true
         }
     }
 
     //删除好友的方法
-    private fun deleteFriend(dialog: DialogInterface) {
+    private fun deleteFriend(userName: String) {
+        EMClient.getInstance().contactManager()
+            .aysncDeleteContact(userName, object : EMCallBackAdapter() {
+                override fun onSuccess() {
+                    context.runOnUiThread { context.toast(R.string.delete_friend_success) }
+                }
 
+                override fun onError(erroeCode: Int, errorMessage: String?) {
+                    context.runOnUiThread { context.toast(R.string.delete_friend_failed) }
+                }
+            })
     }
 
     class ContractViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

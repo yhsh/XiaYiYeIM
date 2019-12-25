@@ -2,8 +2,10 @@ package com.yhsh.xiayiyeim.ui.fragment
 
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hyphenate.chat.EMClient
 import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.adapter.ContactListAdapter
+import com.yhsh.xiayiyeim.adapter.EMContactListenerAdapter
 import com.yhsh.xiayiyeim.contract.ContactContract
 import com.yhsh.xiayiyeim.presenter.ContractPresenter
 import kotlinx.android.synthetic.main.fragment_contacts.*
@@ -70,10 +72,18 @@ class ContactFragment : BaseFragment(), ContactContract.View {
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            adapter = ContactListAdapter(context,contractPresenter.contactListItems)
+            adapter = ContactListAdapter(context, contractPresenter.contactListItems)
         }
         //加载联系人
         contractPresenter.loadContacts()
+        //监听联系人变化
+        EMClient.getInstance().contactManager()
+            .setContactListener(object : EMContactListenerAdapter() {
+                override fun onContactDeleted(userName: String?) {
+                    //联系人被删除重新加载联系人数据
+                    contractPresenter.loadContacts()
+                }
+            })
     }
 
     override fun onLoadContactsSuccess() {

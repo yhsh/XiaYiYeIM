@@ -69,7 +69,7 @@ class DynamicFragment : BaseFragment() {
                 }
             }
 
-            override fun onError(p0: Int, p1: String?) {
+            override fun onError(erroeCode: Int, errorMessage: String?) {
                 activity?.runOnUiThread { context?.toast(R.string.logout_failed) }
             }
         })

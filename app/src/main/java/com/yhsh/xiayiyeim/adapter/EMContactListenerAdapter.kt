@@ -1,6 +1,6 @@
 package com.yhsh.xiayiyeim.adapter
 
-import com.hyphenate.EMCallBack
+import com.hyphenate.EMContactListener
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -31,25 +31,33 @@ import com.hyphenate.EMCallBack
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/24 12:46
+ * 创建时间：2019/12/25 13:59
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
  * 文件包名：com.yhsh.xiayiyeim.adapter
- * 文件说明：环信登录回调接口的回调,让子类继承这个类，需要哪个方法就覆写哪个方法即可
+ * 文件说明：联系人的监听
  */
-open class EMCallBackAdapter : EMCallBack {
-    override fun onSuccess() {
+open class EMContactListenerAdapter : EMContactListener {
+    override fun onContactInvited(p0: String?, p1: String?) {
 
     }
 
-    override fun onProgress(p0: Int, p1: String?) {
+    override fun onContactDeleted(userName: String?) {
 
     }
 
-    override fun onError(erroeCode: Int, errorMessage: String?) {
+    override fun onFriendRequestAccepted(p0: String?) {
+
+    }
+
+    override fun onContactAdded(p0: String?) {
+
+    }
+
+    override fun onFriendRequestDeclined(p0: String?) {
 
     }
 }

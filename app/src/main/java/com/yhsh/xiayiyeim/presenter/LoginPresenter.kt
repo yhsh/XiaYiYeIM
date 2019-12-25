@@ -67,7 +67,7 @@ class LoginPresenter(private val loginView: LoginContract.View) : LoginContract.
                 uiThread { loginView.onLoggedSuccess() }
             }
 
-            override fun onError(p0: Int, p1: String?) {
+            override fun onError(erroeCode: Int, errorMessage: String?) {
                 uiThread { loginView.onLoggedFail() }
             }
         })
