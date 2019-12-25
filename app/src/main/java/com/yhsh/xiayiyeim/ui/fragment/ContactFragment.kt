@@ -4,9 +4,12 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.adapter.ContactListAdapter
+import com.yhsh.xiayiyeim.contract.ContactContract
+import com.yhsh.xiayiyeim.presenter.ContractPresenter
 import kotlinx.android.synthetic.main.fragment_contacts.*
 import kotlinx.android.synthetic.main.header.*
 import kotlinx.android.synthetic.main.header.add
+import org.jetbrains.anko.toast
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -46,7 +49,9 @@ import kotlinx.android.synthetic.main.header.add
  * 文件包名：com.yhsh.xiayiyeim.ui.fragment
  * 文件说明：联系人的页面
  */
-class ContactFragment : BaseFragment() {
+class ContactFragment : BaseFragment(), ContactContract.View {
+
+    private val contractPresenter by lazy { ContractPresenter(this) }
     override fun getLayoutResId(): Int = R.layout.fragment_contacts
     override fun init() {
         super.init()
@@ -59,11 +64,29 @@ class ContactFragment : BaseFragment() {
                 R.color.qqRedDarkColor
             )
             isRefreshing = true
+            //设置下拉刷新的监听
+            setOnRefreshListener { contractPresenter.loadContacts() }
         }
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
             adapter = ContactListAdapter(context)
         }
+        //加载联系人
+        contractPresenter.loadContacts()
+    }
+
+    override fun onLoadContactsSuccess() {
+        //隐藏刷新
+        swipeRefreshLayout.isRefreshing = false
+        //刷新数据
+        recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onLoadContactsFail() {
+        //隐藏刷新
+        swipeRefreshLayout.isRefreshing = false
+        //提示失败
+        context?.toast(R.string.load_contacts_failed)
     }
 }
