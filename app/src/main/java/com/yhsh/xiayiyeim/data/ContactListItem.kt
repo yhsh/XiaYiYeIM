@@ -1,11 +1,4 @@
-package com.yhsh.xiayiyeim.adapter
-
-import android.content.Context
-import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.yhsh.xiayiyeim.data.ContactListItem
-import com.yhsh.xiayiyeim.widget.ContactListItemView
+package com.yhsh.xiayiyeim.data
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -36,32 +29,15 @@ import com.yhsh.xiayiyeim.widget.ContactListItemView
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/25 10:04
+ * 创建时间：2019/12/25 10:43
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim.adapter
- * 文件说明：每个联系人的item的adapter
+ * 文件包名：com.yhsh.xiayiyeim.data
+ * 文件说明：联系人item的数据
  */
-class ContactListAdapter(
-    private val context: Context,
-    private val contactListItems: MutableList<ContactListItem>
-) :
-    RecyclerView.Adapter<ContactListAdapter.ContractViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContractViewHolder {
-        return ContractViewHolder(ContactListItemView(context))
-    }
+data class ContactListItem(val userName: String, val firstLetter: Char) {
 
-    override fun getItemCount(): Int = contactListItems.size
-
-    override fun onBindViewHolder(holder: ContractViewHolder, position: Int) {
-        val contactListItemView = holder.itemView as ContactListItemView
-        contactListItemView.bindView(contactListItems[position])
-    }
-
-    class ContractViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    }
 }

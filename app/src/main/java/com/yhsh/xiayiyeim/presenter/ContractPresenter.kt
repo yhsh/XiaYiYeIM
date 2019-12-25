@@ -3,6 +3,8 @@ package com.yhsh.xiayiyeim.presenter
 import com.hyphenate.chat.EMClient
 import com.hyphenate.exceptions.HyphenateException
 import com.yhsh.xiayiyeim.contract.ContactContract
+import com.yhsh.xiayiyeim.data.ContactListItem
+import com.yhsh.xiayiyeim.widget.ContactListItemView
 import org.jetbrains.anko.doAsync
 
 /*
@@ -45,15 +47,24 @@ import org.jetbrains.anko.doAsync
  */
 class ContractPresenter(private val contractView: ContactContract.View) :
     ContactContract.Presenter {
+    val contactListItems = mutableListOf<ContactListItem>()
     override fun loadContacts() {
-        try {
-            doAsync {
-                val list = EMClient.getInstance().contactManager().allContactsFromServer
-                println(list)
+        doAsync {
+            try {
+                val userNameList = EMClient.getInstance().contactManager().allContactsFromServer
+                //根据首字母排序
+                userNameList.sortBy { it[0] }
+                //添加数据之前清空
+                contactListItems.clear()
+                userNameList.forEach {
+                    val contactListItem = ContactListItem(it, it[0].toUpperCase())
+                    contactListItems.add(contactListItem)
+                }
+                println(userNameList)
+                uiThread { contractView.onLoadContactsSuccess() }
+            } catch (e: HyphenateException) {
+                uiThread { contractView.onLoadContactsFail() }
             }
-            uiThread { contractView.onLoadContactsSuccess() }
-        } catch (e: HyphenateException) {
-            uiThread { contractView.onLoadContactsFail() }
         }
     }
 }
