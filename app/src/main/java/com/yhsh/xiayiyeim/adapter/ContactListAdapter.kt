@@ -50,6 +50,7 @@ class ContactListAdapter(
     private val contactListItems: MutableList<ContactListItem>
 ) :
     RecyclerView.Adapter<ContactListAdapter.ContractViewHolder>() {
+    var isShow: Boolean = true
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContractViewHolder {
         return ContractViewHolder(ContactListItemView(context))
     }
@@ -58,7 +59,9 @@ class ContactListAdapter(
 
     override fun onBindViewHolder(holder: ContractViewHolder, position: Int) {
         val contactListItemView = holder.itemView as ContactListItemView
-        contactListItemView.bindView(contactListItems[position])
+        println("打印用户：" + contactListItems[position].userName)
+        isShow = position == 0 || contactListItems[position].firstLetter.toUpperCase() != contactListItems[position - 1].firstLetter.toUpperCase()
+        contactListItemView.bindView(contactListItems[position], isShow)
     }
 
     class ContractViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

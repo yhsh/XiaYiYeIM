@@ -53,8 +53,11 @@ class ContactListItemView(context: Context?, attrs: AttributeSet? = null) :
         View.inflate(context, R.layout.view_contact_item, this)
     }
 
-    fun bindView(contactListItem: ContactListItem) {
+    fun bindView(contactListItem: ContactListItem, isShow: Boolean) {
         firstLetter.text = contactListItem.firstLetter.toString()
         userName.text = contactListItem.userName
+        if (isShow) {
+            firstLetter.visibility = View.VISIBLE
+        } else firstLetter.visibility = View.GONE
     }
 }
