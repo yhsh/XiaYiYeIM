@@ -1,12 +1,10 @@
-package com.yhsh.xiayiyeim.ui.fragment
+package com.yhsh.xiayiyeim.adapter
 
+import android.content.Context
 import android.view.View
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.yhsh.xiayiyeim.R
-import com.yhsh.xiayiyeim.adapter.ContactListAdapter
-import kotlinx.android.synthetic.main.fragment_contacts.*
-import kotlinx.android.synthetic.main.header.*
-import kotlinx.android.synthetic.main.header.add
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.yhsh.xiayiyeim.widget.ContactListItemView
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -37,33 +35,28 @@ import kotlinx.android.synthetic.main.header.add
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/24 16:50
+ * 创建时间：2019/12/25 10:04
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim.ui.fragment
- * 文件说明：联系人的页面
+ * 文件包名：com.yhsh.xiayiyeim.adapter
+ * 文件说明：每个联系人的item的adapter
  */
-class ContactFragment : BaseFragment() {
-    override fun getLayoutResId(): Int = R.layout.fragment_contacts
-    override fun init() {
-        super.init()
-        headerTitle.text = getString(R.string.contact)
-        add.visibility = View.VISIBLE
-        swipeRefreshLayout.apply {
-            setColorSchemeResources(
-                R.color.qqBlueColor,
-                R.color.colorAccent,
-                R.color.qqRedDarkColor
-            )
-            isRefreshing = true
-        }
-        recyclerView.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context)
-            adapter = ContactListAdapter(context)
-        }
+class ContactListAdapter(private val context: Context) :
+    RecyclerView.Adapter<ContactListAdapter.ContractViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContractViewHolder {
+        return ContractViewHolder(ContactListItemView(context))
+    }
+
+    override fun getItemCount(): Int = 30
+
+    override fun onBindViewHolder(holder: ContractViewHolder, position: Int) {
+
+    }
+
+    class ContractViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     }
 }
