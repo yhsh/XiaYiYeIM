@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:textColor="@color/qq_gray_dark"
+        android:textColor="@color/qqGrayDarkColor"
         android:layout_gravity="center_horizontal"
         android:textSize="14sp"
         android:text="上午9:30"/>

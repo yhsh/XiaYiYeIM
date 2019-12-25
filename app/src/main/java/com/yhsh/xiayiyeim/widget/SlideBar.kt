@@ -32,7 +32,7 @@ class SlideBar(context: Context?, attrs: AttributeSet? = null) : View(context, a
 
     init {
         paint.apply {
-            color = resources.getColor(R.color.qq_section_text_color)
+            color = resources.getColor(R.color.qqSectionTextColor)
             textSize = sp(12).toFloat()
             //对齐居中
             textAlign = Paint.Align.CENTER

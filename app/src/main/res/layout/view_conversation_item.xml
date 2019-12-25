@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textSize="14sp"
-            android:textColor="@color/qq_gray_dark"
+            android:textColor="@color/qqGrayDarkColor"
             android:layout_toRightOf="@id/avatar"
             android:layout_alignBottom="@id/avatar"
             android:text="Hello"/>
@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:textColor="@color/qq_gray_dark"
+            android:textColor="@color/qqGrayDarkColor"
             android:text="17:47"
             android:layout_alignParentRight="true"
             android:layout_margin="10dp"/>
