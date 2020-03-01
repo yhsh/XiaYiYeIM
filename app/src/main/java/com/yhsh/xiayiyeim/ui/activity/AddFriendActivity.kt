@@ -1,4 +1,7 @@
-package com.yhsh.xiayiyeim.data
+package com.yhsh.xiayiyeim.ui.activity
+
+import com.yhsh.xiayiyeim.R
+import kotlinx.android.synthetic.main.header.*
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -29,15 +32,20 @@ package com.yhsh.xiayiyeim.data
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2019/12/25 10:43
+ * 创建时间：2020/3/1 19:42
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim.data
- * 文件说明：联系人item的数据
+ * 文件包名：com.yhsh.xiayiyeim.ui.activity
+ * 文件说明：添加好友的页面
  */
-data class ContactListItem(val userName: String, val firstLetter: Char,val showFirstLetter:Boolean = true) {
-
+class AddFriendActivity : BaseActivity() {
+    override fun getLayoutResId(): Int = R.layout.activity_add_friend
+    override fun init() {
+        super.init()
+        //设置标题
+        headerTitle.text = getString(R.string.add_friend)
+    }
 }

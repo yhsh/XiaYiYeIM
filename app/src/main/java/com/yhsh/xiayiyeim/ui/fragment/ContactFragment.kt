@@ -8,9 +8,11 @@ import com.yhsh.xiayiyeim.adapter.ContactListAdapter
 import com.yhsh.xiayiyeim.adapter.EMContactListenerAdapter
 import com.yhsh.xiayiyeim.contract.ContactContract
 import com.yhsh.xiayiyeim.presenter.ContractPresenter
+import com.yhsh.xiayiyeim.ui.activity.AddFriendActivity
+import com.yhsh.xiayiyeim.widget.SlideBar
 import kotlinx.android.synthetic.main.fragment_contacts.*
 import kotlinx.android.synthetic.main.header.*
-import kotlinx.android.synthetic.main.header.add
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 /*
@@ -84,6 +86,34 @@ class ContactFragment : BaseFragment(), ContactContract.View {
                     contractPresenter.loadContacts()
                 }
             })
+
+        slideBar.onSectionChangeListener = object : SlideBar.OnSectionChangeListener {
+            override fun onSectionChange(firstLetter: String) {
+                //按下的字母信息
+                section.visibility = View.VISIBLE
+                section.text = firstLetter
+                recyclerView.smoothScrollToPosition(getPosition(firstLetter))
+            }
+
+            override fun onSlideFinish() {
+                section.visibility = View.GONE
+            }
+        }
+        add.setOnClickListener { context?.startActivity<AddFriendActivity>() }
+    }
+
+    /**
+     * 根据按下的字母查找汉字首字母为按下字母的位置
+     */
+    private fun getPosition(firstLetter: String): Int {
+        val binarySearch = contractPresenter.contactListItems.binarySearch {
+            it.firstLetter.minus(firstLetter[0])
+        }
+        if (binarySearch > 0) {
+            return binarySearch
+        } else {
+            return 0
+        }
     }
 
     override fun onLoadContactsSuccess() {

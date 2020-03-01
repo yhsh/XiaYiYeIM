@@ -21,7 +21,7 @@ class SlideBar(context: Context?, attrs: AttributeSet? = null) : View(context, a
 
     private var textBaseline = 0f
 
-    private var onSectionChangeListener: OnSectionChangeListener? = null
+    public var onSectionChangeListener: OnSectionChangeListener? = null
 
     companion object {
         private val SECTIONS = arrayOf(
