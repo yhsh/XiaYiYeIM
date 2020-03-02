@@ -1,11 +1,13 @@
-package com.yhsh.xiayiyeim.adapter
+package com.yhsh.xiayiyeim.presenter
 
-import android.content.Context
-import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import cn.bmob.v3.BmobQuery
+import cn.bmob.v3.BmobUser
+import cn.bmob.v3.exception.BmobException
+import cn.bmob.v3.listener.FindListener
+import com.hyphenate.chat.EMClient
+import com.yhsh.xiayiyeim.contract.AddFriendContract
 import com.yhsh.xiayiyeim.data.AddFriendItem
-import com.yhsh.xiayiyeim.widget.AddFriendListItemView
+import org.jetbrains.anko.doAsync
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -36,33 +38,41 @@ import com.yhsh.xiayiyeim.widget.AddFriendListItemView
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2020/3/2 17:05
+ * 创建时间：2020/3/2 17:33
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim.adapter
+ * 文件包名：com.yhsh.xiayiyeim.presenter
  * 文件说明：
  */
-class AddFriendListAdapter(
-    val context: Context,
-    private val addFriendItems: MutableList<AddFriendItem>
-) :
-    RecyclerView.Adapter<AddFriendListAdapter.AddFriendListItemViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddFriendListItemViewHolder {
-        return AddFriendListItemViewHolder(AddFriendListItemView(context))
-    }
-
-    override fun getItemCount(): Int = addFriendItems.size
-
-    override fun onBindViewHolder(holder: AddFriendListItemViewHolder, position: Int) {
-        //绑定数据
-        val addFriendListItemView = holder.itemView as AddFriendListItemView
-        addFriendListItemView.bindView(addFriendItems.get(position))
-    }
-
-    class AddFriendListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+class AddFriendPresenter(val view: AddFriendContract.View) : AddFriendContract.Presenter {
+    val addFriendItems = mutableListOf<AddFriendItem>()
+    override fun search(key: String) {
+        val query = BmobQuery<BmobUser>()
+        //查找是否有此key的用户户名数据
+        query.addWhereContains("username", key)
+            //结果排除当前用户
+            .addWhereNotEqualTo("username", EMClient.getInstance().currentUser)
+        query.findObjects(object : FindListener<BmobUser>() {
+            override fun done(p0: MutableList<BmobUser>?, p1: BmobException?) {
+                for (index in 0 until p0!!.size) {
+                    println("打印集合1=${p0[index].username}")
+                }
+                if (p1 == null) {
+                    doAsync {
+                        p0.forEach {
+                            println("打印集合2=${it.username}")
+                            val addFriendItem = AddFriendItem(it.username, it.createdAt)
+                            addFriendItems.add(addFriendItem)
+                        }
+                    }
+                    uiThread {
+                        view.onSearchSuccess()
+                    }
+                } else view.onSearchFail()
+            }
+        })
     }
 }

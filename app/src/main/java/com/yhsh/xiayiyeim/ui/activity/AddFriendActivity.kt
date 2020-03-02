@@ -1,11 +1,16 @@
 package com.yhsh.xiayiyeim.ui.activity
 
-import android.widget.LinearLayout
+import android.text.TextUtils
+import android.view.KeyEvent
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.adapter.AddFriendListAdapter
+import com.yhsh.xiayiyeim.contract.AddFriendContract
+import com.yhsh.xiayiyeim.presenter.AddFriendPresenter
 import kotlinx.android.synthetic.main.activity_add_friend.*
 import kotlinx.android.synthetic.main.header.*
+import org.jetbrains.anko.toast
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -45,7 +50,9 @@ import kotlinx.android.synthetic.main.header.*
  * 文件包名：com.yhsh.xiayiyeim.ui.activity
  * 文件说明：添加好友的页面
  */
-class AddFriendActivity : BaseActivity() {
+class AddFriendActivity : BaseActivity(), AddFriendContract.View {
+
+    val addFriendPresenter by lazy { AddFriendPresenter(this) }
     override fun getLayoutResId(): Int = R.layout.activity_add_friend
     override fun init() {
         super.init()
@@ -54,7 +61,38 @@ class AddFriendActivity : BaseActivity() {
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            adapter = AddFriendListAdapter(context)
+            adapter = AddFriendListAdapter(context,addFriendPresenter.addFriendItems)
         }
+        //设置搜索按钮和键盘搜索按钮的点击事件
+        search.setOnClickListener { search() }
+        userName.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                search()
+                return true
+            }
+        })
+    }
+
+    fun search() {
+        val searchData = userName.text.toString().trim()
+        if (TextUtils.isEmpty(searchData)) {
+            return
+        }
+        //隐藏软键盘
+        hideMethodKeyboard()
+        showProgress(getString(R.string.searching))
+        addFriendPresenter.search(searchData)
+    }
+
+    override fun onSearchSuccess() {
+        dismissProgress()
+        toast(R.string.search_success)
+        //刷新页面
+        recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onSearchFail() {
+        dismissProgress()
+        toast(R.string.search_failed)
     }
 }
