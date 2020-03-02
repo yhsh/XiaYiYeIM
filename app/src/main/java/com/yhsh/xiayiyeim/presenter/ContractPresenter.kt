@@ -4,7 +4,8 @@ import com.hyphenate.chat.EMClient
 import com.hyphenate.exceptions.HyphenateException
 import com.yhsh.xiayiyeim.contract.ContactContract
 import com.yhsh.xiayiyeim.data.ContactListItem
-import com.yhsh.xiayiyeim.widget.ContactListItemView
+import com.yhsh.xiayiyeim.data.db.Contact
+import com.yhsh.xiayiyeim.data.db.IMDataBase
 import org.jetbrains.anko.doAsync
 
 /*
@@ -50,15 +51,21 @@ class ContractPresenter(private val contractView: ContactContract.View) :
     val contactListItems = mutableListOf<ContactListItem>()
     override fun loadContacts() {
         doAsync {
+            //先清空数据
+            IMDataBase.instance.deleteAllContact()
             try {
                 val userNameList = EMClient.getInstance().contactManager().allContactsFromServer
                 //根据首字母排序
                 userNameList.sortBy { it[0] }
                 //添加数据之前清空
                 contactListItems.clear()
-                userNameList.forEach {
-                    val contactListItem = ContactListItem(it, it[0].toUpperCase())
+                userNameList.forEachIndexed { index, s ->
+                    val showFirstLetter = index == 0 || s[0] != userNameList[index - 1][0]
+                    val contactListItem = ContactListItem(s, s[0].toUpperCase(), showFirstLetter)
                     contactListItems.add(contactListItem)
+                    val contact = Contact(mutableMapOf("name " to s))
+                    //保存联系人
+                    IMDataBase.instance.saveContact(contact)
                 }
                 println(userNameList)
                 uiThread { contractView.onLoadContactsSuccess() }

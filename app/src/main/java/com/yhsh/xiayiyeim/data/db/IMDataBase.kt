@@ -1,12 +1,10 @@
-package com.yhsh.xiayiyeim.widget
+package com.yhsh.xiayiyeim.data.db
 
-import android.content.Context
-import android.util.AttributeSet
-import android.view.View
-import android.widget.RelativeLayout
-import com.yhsh.xiayiyeim.R
-import com.yhsh.xiayiyeim.data.AddFriendItem
-import kotlinx.android.synthetic.main.view_add_friend_item.view.*
+import com.yhsh.xiayiyeim.extentions.toVarargArray
+import org.jetbrains.anko.db.MapRowParser
+import org.jetbrains.anko.db.delete
+import org.jetbrains.anko.db.insert
+import org.jetbrains.anko.db.select
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -37,30 +35,44 @@ import kotlinx.android.synthetic.main.view_add_friend_item.view.*
 
 /**
  * @author 下一页5（轻飞扬）
- * 创建时间：2020/3/2 17:02
+ * 创建时间：2020/3/2 18:59
  * 个人小站：http://yhsh.wap.ai(已挂)
  * 最新小站：http://www.iyhsh.icoc.in
  * 联系作者：企鹅 13343401268
  * 博客地址：http://blog.csdn.net/xiayiye5
  * 项目名称：XiaYiYeIM
- * 文件包名：com.yhsh.xiayiyeim.widget
+ * 文件包名：com.yhsh.xiayiyeim.data.db
  * 文件说明：
  */
-class AddFriendListItemView(context: Context?, attrs: AttributeSet? = null) :
-    RelativeLayout(context, attrs) {
-    fun bindView(data: AddFriendItem) {
-        if (data.isAdded) {
-            add.isEnabled = false
-            add.text = context.getString(R.string.already_added)
-        } else {
-            add.isEnabled = true
-            add.text = context.getString(R.string.add)
-        }
-        userName.text = data.userName
-        timestamp.text = data.timeStamp
+class IMDataBase {
+    companion object {
+        val dataBaseHelper = DataBaseHelper()
+        val instance = IMDataBase()
     }
 
-    init {
-        View.inflate(context, R.layout.view_add_friend_item, this)
+    /**
+     * 保存用户信息
+     */
+    fun saveContact(contact: Contact) {
+        dataBaseHelper.use {
+            insert(ContactTable.NAME, *contact.map.toVarargArray())
+        }
+    }
+
+    /**
+     * 获取所有用户信息
+     */
+    fun getAllContact(): List<Contact> = dataBaseHelper.use {
+        select(ContactTable.NAME).parseList(object : MapRowParser<Contact> {
+            override fun parseRow(columns: Map<String, Any?>): Contact =
+                Contact(columns.toMutableMap())
+        })
+    }
+
+    /**
+     * 删除联系人的方法
+     */
+    fun deleteAllContact() {
+        dataBaseHelper.use { delete(ContactTable.NAME, null, null) }
     }
 }

@@ -45,9 +45,14 @@ import com.yhsh.xiayiyeim.BuildConfig
  * 文件说明：
  */
 class IMApplication : Application() {
+    companion object {
+        lateinit var instance: IMApplication
+    }
+
     override fun onCreate() {
         super.onCreate()
-        Bmob.initialize(applicationContext,"c9034ef5d3355801a54b23d877977607")
+        instance = this
+        Bmob.initialize(applicationContext, "c9034ef5d3355801a54b23d877977607")
         //初始化环信配置
         EMClient.getInstance().init(applicationContext, EMOptions())
         EMClient.getInstance().setDebugMode(BuildConfig.DEBUG)

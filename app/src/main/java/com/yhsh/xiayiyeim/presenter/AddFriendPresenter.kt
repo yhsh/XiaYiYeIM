@@ -7,6 +7,7 @@ import cn.bmob.v3.listener.FindListener
 import com.hyphenate.chat.EMClient
 import com.yhsh.xiayiyeim.contract.AddFriendContract
 import com.yhsh.xiayiyeim.data.AddFriendItem
+import com.yhsh.xiayiyeim.data.db.IMDataBase
 import org.jetbrains.anko.doAsync
 
 /*
@@ -61,10 +62,19 @@ class AddFriendPresenter(val view: AddFriendContract.View) : AddFriendContract.P
                     println("打印集合1=${p0[index].username}")
                 }
                 if (p1 == null) {
+                    val allContact = IMDataBase.instance.getAllContact()
+
                     doAsync {
                         p0.forEach {
                             println("打印集合2=${it.username}")
-                            val addFriendItem = AddFriendItem(it.username, it.createdAt)
+                            var isAdded = false
+                            //比对是否添加好友
+                            for (contact in allContact) {
+                                if (contact.name == it.username) {
+                                    isAdded = true
+                                }
+                            }
+                            val addFriendItem = AddFriendItem(it.username, it.createdAt, isAdded)
                             addFriendItems.add(addFriendItem)
                         }
                     }

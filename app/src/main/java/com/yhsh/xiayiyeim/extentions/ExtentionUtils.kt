@@ -39,13 +39,18 @@ package com.yhsh.xiayiyeim.extentions
  * 文件说明：
  */
 //class ExtentionUtils {
-    /**
-     * 用户名是否可用
-     */
-    fun String.isValidUserName(): Boolean = this.matches(Regex("^[a-zA-Z]\\w{2,19}$"))
+/**
+ * 用户名是否可用
+ */
+fun String.isValidUserName(): Boolean = this.matches(Regex("^[a-zA-Z]\\w{2,19}$"))
 
-    /**
-     * 密码是否可用
-     */
-    fun String.isValidPassword(): Boolean = this.matches(Regex("^[0-9]{3,20}$"))
+/**
+ * 密码是否可用
+ */
+fun String.isValidPassword(): Boolean = this.matches(Regex("^[0-9]{3,20}$"))
+
+fun <K, V> MutableMap<K, V>.toVarargArray(): Array<Pair<K, V>> =
+    //将MutableMap类型转为Pair类型数据
+    map { Pair(it.key, it.value) }.toTypedArray()
+
 //}
