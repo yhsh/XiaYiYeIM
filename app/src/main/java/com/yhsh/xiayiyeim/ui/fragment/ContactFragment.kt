@@ -56,37 +56,32 @@ import org.jetbrains.anko.toast
 class ContactFragment : BaseFragment(), ContactContract.View {
 
     private val contractPresenter by lazy { ContractPresenter(this) }
+    private val contactListener = object : EMContactListenerAdapter() {
+        override fun onContactDeleted(userName: String?) {
+            //联系人被删除重新加载联系人数据
+            contractPresenter.loadContacts()
+        }
+
+        override fun onContactAdded(p0: String?) {
+            //重新获取数据
+            contractPresenter.loadContacts()
+        }
+    }
+
     override fun getLayoutResId(): Int = R.layout.fragment_contacts
     override fun init() {
         super.init()
-        headerTitle.text = getString(R.string.contact)
-        add.visibility = View.VISIBLE
-        swipeRefreshLayout.apply {
-            setColorSchemeResources(
-                R.color.qqBlueColor,
-                R.color.colorAccent,
-                R.color.qqRedDarkColor
-            )
-            isRefreshing = true
-            //设置下拉刷新的监听
-            setOnRefreshListener { contractPresenter.loadContacts() }
-        }
-        recyclerView.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context)
-            adapter = ContactListAdapter(context, contractPresenter.contactListItems)
-        }
+        initHeader()
+        initSwipeRefreshLayout()
+        initRecyclerView()
+        //监听联系人变化
+        EMClient.getInstance().contactManager().setContactListener(contactListener)
+        initSlideBar()
         //加载联系人
         contractPresenter.loadContacts()
-        //监听联系人变化
-        EMClient.getInstance().contactManager()
-            .setContactListener(object : EMContactListenerAdapter() {
-                override fun onContactDeleted(userName: String?) {
-                    //联系人被删除重新加载联系人数据
-                    contractPresenter.loadContacts()
-                }
-            })
+    }
 
+    private fun initSlideBar() {
         slideBar.onSectionChangeListener = object : SlideBar.OnSectionChangeListener {
             override fun onSectionChange(firstLetter: String) {
                 //按下的字母信息
@@ -99,6 +94,32 @@ class ContactFragment : BaseFragment(), ContactContract.View {
                 section.visibility = View.GONE
             }
         }
+    }
+
+    private fun initRecyclerView() {
+        recyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
+            adapter = ContactListAdapter(context, contractPresenter.contactListItems)
+        }
+    }
+
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout.apply {
+            setColorSchemeResources(
+                R.color.qqBlueColor,
+                R.color.colorAccent,
+                R.color.qqRedDarkColor
+            )
+            isRefreshing = true
+            //设置下拉刷新的监听
+            setOnRefreshListener { contractPresenter.loadContacts() }
+        }
+    }
+
+    private fun initHeader() {
+        headerTitle.text = getString(R.string.contact)
+        add.visibility = View.VISIBLE
         add.setOnClickListener { context?.startActivity<AddFriendActivity>() }
     }
 
@@ -118,9 +139,13 @@ class ContactFragment : BaseFragment(), ContactContract.View {
 
     override fun onLoadContactsSuccess() {
         //隐藏刷新
-        swipeRefreshLayout.isRefreshing = false
+        swipeRefreshLayout?.let {
+            swipeRefreshLayout.isRefreshing = false
+        }
         //刷新数据
-        recyclerView.adapter?.notifyDataSetChanged()
+        recyclerView?.let {
+            recyclerView.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun onLoadContactsFail() {
@@ -128,5 +153,11 @@ class ContactFragment : BaseFragment(), ContactContract.View {
         swipeRefreshLayout.isRefreshing = false
         //提示失败
         context?.toast(R.string.load_contacts_failed)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //移除监听器
+        EMClient.getInstance().contactManager().removeContactListener(contactListener)
     }
 }

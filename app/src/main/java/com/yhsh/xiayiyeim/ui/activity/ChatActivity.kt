@@ -1,6 +1,11 @@
 package com.yhsh.xiayiyeim.ui.activity
 
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
 import com.yhsh.xiayiyeim.R
+import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.header.*
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -42,4 +47,32 @@ import com.yhsh.xiayiyeim.R
  */
 class ChatActivity : BaseActivity() {
     override fun getLayoutResId(): Int = R.layout.activity_chat
+    override fun init() {
+        super.init()
+        initHeader()
+        initEditText()
+    }
+
+    private fun initHeader() {
+        back.visibility = View.VISIBLE
+        headerTitle.text =
+            String.format(getString(R.string.chat_title), intent.getStringExtra("userName"))
+        back.setOnClickListener { finish() }
+    }
+
+    private fun initEditText() {
+        edit.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                send.isEnabled = !s.isNullOrEmpty()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+        })
+    }
 }

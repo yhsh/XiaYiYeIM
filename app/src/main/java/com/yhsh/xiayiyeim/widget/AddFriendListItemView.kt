@@ -4,9 +4,13 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.RelativeLayout
+import com.hyphenate.chat.EMClient
 import com.yhsh.xiayiyeim.R
+import com.yhsh.xiayiyeim.adapter.EMCallBackAdapter
 import com.yhsh.xiayiyeim.data.AddFriendItem
 import kotlinx.android.synthetic.main.view_add_friend_item.view.*
+import org.jetbrains.anko.runOnUiThread
+import org.jetbrains.anko.toast
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -58,9 +62,26 @@ class AddFriendListItemView(context: Context?, attrs: AttributeSet? = null) :
         }
         userName.text = data.userName
         timestamp.text = data.timeStamp
+        add.setOnClickListener { addFriend(data.userName) }
     }
 
     init {
         View.inflate(context, R.layout.view_add_friend_item, this)
+    }
+
+    /**
+     * 添加好友的方法
+     */
+    private fun addFriend(userName: String) {
+        EMClient.getInstance().contactManager()
+            .aysncAddContact(userName, null, object : EMCallBackAdapter() {
+                override fun onSuccess() {
+                    context.runOnUiThread { toast(R.string.send_add_friend_success) }
+                }
+
+                override fun onError(erroeCode: Int, errorMessage: String?) {
+                    context.runOnUiThread { toast(R.string.send_add_friend_failed) }
+                }
+            })
     }
 }
