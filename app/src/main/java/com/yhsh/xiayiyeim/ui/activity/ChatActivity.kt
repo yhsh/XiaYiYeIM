@@ -2,10 +2,20 @@ package com.yhsh.xiayiyeim.ui.activity
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.View
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.hyphenate.chat.EMClient
+import com.hyphenate.chat.EMMessage
 import com.yhsh.xiayiyeim.R
+import com.yhsh.xiayiyeim.adapter.EMMessageListenerAdapter
+import com.yhsh.xiayiyeim.adapter.MessageListAdapter
+import com.yhsh.xiayiyeim.contract.ChatContract
+import com.yhsh.xiayiyeim.presenter.ChatPresenter
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.header.*
+import org.jetbrains.anko.toast
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -45,18 +55,49 @@ import kotlinx.android.synthetic.main.header.*
  * 文件包名：com.yhsh.xiayiyeim.ui.activity
  * 文件说明：聊天的页面
  */
-class ChatActivity : BaseActivity() {
+class ChatActivity : BaseActivity(), ChatContract.View {
+    private val chatPresenter by lazy { ChatPresenter(this) }
+    lateinit var userName: String
+    private val messageListener = object : EMMessageListenerAdapter() {
+        override fun onMessageReceived(p0: MutableList<EMMessage>?) {
+            super.onMessageReceived(p0)
+            chatPresenter.adMessage(userName, p0)
+            //刷新消息
+            runOnUiThread { recyclerView.adapter?.notifyDataSetChanged() }
+        }
+    }
+
     override fun getLayoutResId(): Int = R.layout.activity_chat
     override fun init() {
         super.init()
         initHeader()
         initEditText()
+        initRecyclerView()
+        EMClient.getInstance().chatManager().addMessageListener(messageListener)
+        send.setOnClickListener { send() }
+    }
+
+    private fun initRecyclerView() {
+        recyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
+            adapter = MessageListAdapter(this@ChatActivity, chatPresenter.messages)
+        }
+    }
+
+    private fun send() {
+        val sendData = edit.text.toString().trim()
+        if (sendData.isBlank()) {
+            return
+        }
+        hideMethodKeyboard()
+        chatPresenter.sendMessage(userName, sendData)
     }
 
     private fun initHeader() {
         back.visibility = View.VISIBLE
-        headerTitle.text =
-            String.format(getString(R.string.chat_title), intent.getStringExtra("userName"))
+        userName = intent.getStringExtra("userName")
+        headerTitle.text = String.format(getString(R.string.chat_title), userName)
         back.setOnClickListener { finish() }
     }
 
@@ -74,5 +115,31 @@ class ChatActivity : BaseActivity() {
 
             }
         })
+        edit.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                send()
+                return true
+            }
+        })
+    }
+
+    override fun onStartSendMessage() {
+        recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onSendMessageSuccess() {
+        recyclerView.adapter?.notifyDataSetChanged()
+        toast(R.string.send_message_success)
+        edit.text.clear()
+    }
+
+    override fun onSendMessageFail() {
+        recyclerView.adapter?.notifyDataSetChanged()
+        toast(R.string.send_message_failed)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EMClient.getInstance().chatManager().removeMessageListener(messageListener)
     }
 }
