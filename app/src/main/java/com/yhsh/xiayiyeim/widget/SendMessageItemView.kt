@@ -52,8 +52,8 @@ import java.util.*
  */
 class SendMessageItemView(context: Context?, attrs: AttributeSet? = null) :
     RelativeLayout(context, attrs) {
-    fun bindView(singleMessage: EMMessage) {
-        updateTimeStap(singleMessage)
+    fun bindView(singleMessage: EMMessage, showStamp: Boolean) {
+        updateTimeStap(singleMessage, showStamp)
         updateMessage(singleMessage)
         updateProgress(singleMessage)
     }
@@ -85,8 +85,13 @@ class SendMessageItemView(context: Context?, attrs: AttributeSet? = null) :
         }
     }
 
-    private fun updateTimeStap(singleMessage: EMMessage) {
-        timestamp.text = DateUtils.getTimestampString(Date(singleMessage.msgTime))
+    private fun updateTimeStap(singleMessage: EMMessage, showStamp: Boolean) {
+        if (showStamp) {
+            timestamp.visibility = View.VISIBLE
+            timestamp.text = DateUtils.getTimestampString(Date(singleMessage.msgTime))
+        } else {
+            timestamp.visibility = View.GONE
+        }
     }
 
     init {

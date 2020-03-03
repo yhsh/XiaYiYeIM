@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hyphenate.chat.EMMessage
+import com.hyphenate.util.DateUtils
 import com.yhsh.xiayiyeim.widget.ReceiveMessageItemView
 import com.yhsh.xiayiyeim.widget.SendMessageItemView
 
@@ -65,14 +66,26 @@ class MessageListAdapter(val context: Context, private val listMessage: List<EMM
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         //设置数据
+        val showStamp = showTimeStamp(position)
         val singleMessage = listMessage.get(position)
         if (getItemViewType(position) == ITEM_TYPE_SEND_MESSAGE) {
             val sendMessageItemView = holder.itemView as SendMessageItemView
-            sendMessageItemView.bindView(singleMessage)
+            sendMessageItemView.bindView(singleMessage,showStamp)
         } else {
             val receiveMessageItemView = holder.itemView as ReceiveMessageItemView
-            receiveMessageItemView.bindView(singleMessage)
+            receiveMessageItemView.bindView(singleMessage,showStamp)
         }
+    }
+
+    private fun showTimeStamp(position: Int): Boolean {
+        var isShow = true;
+        if (position > 0) {
+            isShow = !DateUtils.isCloseEnough(
+                listMessage[position].msgTime,
+                listMessage[position - 1].msgTime
+            )
+        }
+        return isShow
     }
 
     override fun getItemViewType(position: Int): Int {

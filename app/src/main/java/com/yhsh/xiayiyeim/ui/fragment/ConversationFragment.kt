@@ -2,6 +2,7 @@ package com.yhsh.xiayiyeim.ui.fragment
 
 import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.ui.activity.BaseActivity
+import kotlinx.android.synthetic.main.header.*
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -45,5 +46,10 @@ class ConversationFragment : BaseFragment() {
     override fun getLayoutResId(): Int = R.layout.fragment_conversation
     override fun init() {
         super.init()
+        initHeader()
+    }
+
+    private fun initHeader() {
+        headerTitle.text = getString(R.string.message)
     }
 }

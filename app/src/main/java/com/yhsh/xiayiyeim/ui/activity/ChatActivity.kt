@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMMessage
 import com.yhsh.xiayiyeim.R
@@ -63,7 +64,10 @@ class ChatActivity : BaseActivity(), ChatContract.View {
             super.onMessageReceived(p0)
             chatPresenter.adMessage(userName, p0)
             //刷新消息
-            runOnUiThread { recyclerView.adapter?.notifyDataSetChanged() }
+            runOnUiThread {
+                recyclerView.adapter?.notifyDataSetChanged()
+                scrollToBottom()
+            }
         }
     }
 
@@ -75,6 +79,7 @@ class ChatActivity : BaseActivity(), ChatContract.View {
         initRecyclerView()
         EMClient.getInstance().chatManager().addMessageListener(messageListener)
         send.setOnClickListener { send() }
+        chatPresenter.loadMessage(userName)
     }
 
     private fun initRecyclerView() {
@@ -82,6 +87,18 @@ class ChatActivity : BaseActivity(), ChatContract.View {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
             adapter = MessageListAdapter(this@ChatActivity, chatPresenter.messages)
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        val linearLayoutManager = layoutManager as LinearLayoutManager
+                        if (linearLayoutManager.findFirstVisibleItemPosition() == 0) {
+                            //证明滑动到顶部了,再去加载更多数据
+                            chatPresenter.loadMoreMessage(userName)
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -131,11 +148,32 @@ class ChatActivity : BaseActivity(), ChatContract.View {
         recyclerView.adapter?.notifyDataSetChanged()
         toast(R.string.send_message_success)
         edit.text.clear()
+        scrollToBottom()
     }
 
     override fun onSendMessageFail() {
         recyclerView.adapter?.notifyDataSetChanged()
         toast(R.string.send_message_failed)
+    }
+
+    /**
+     * 自动滑动到底部的方法
+     */
+    private fun scrollToBottom() {
+        recyclerView.scrollToPosition(chatPresenter.messages.size - 1)
+    }
+
+    /**
+     * 打开聊天页面自动加载之前的消息后自动刷新并且滑动到最下面
+     */
+    override fun onMessageLoad() {
+        recyclerView.adapter?.notifyDataSetChanged()
+        scrollToBottom()
+    }
+
+    override fun onMoreMessageLoad(size: Int) {
+        recyclerView.adapter?.notifyDataSetChanged()
+        recyclerView.scrollToPosition(size)
     }
 
     override fun onDestroy() {

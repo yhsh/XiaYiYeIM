@@ -4,6 +4,8 @@ import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMMessage
 import com.yhsh.xiayiyeim.adapter.EMCallBackAdapter
 import com.yhsh.xiayiyeim.contract.ChatContract
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -44,6 +46,9 @@ import com.yhsh.xiayiyeim.contract.ChatContract
  * 文件说明：聊天消息P层
  */
 class ChatPresenter(val view: ChatContract.View) : ChatContract.Presenter {
+    companion object {
+        const val PAGE_SIZE = 10
+    }
 
     //保存消息的集合
     var messages = mutableListOf<EMMessage>()
@@ -70,5 +75,23 @@ class ChatPresenter(val view: ChatContract.View) : ChatContract.Presenter {
         //更新消息为已读
         val conversation = EMClient.getInstance().chatManager().getConversation(userName)
         conversation.markAllMessagesAsRead()
+    }
+
+    override fun loadMessage(userName: String) {
+        doAsync {
+            val conversion = EMClient.getInstance().chatManager().getConversation(userName)
+            messages.addAll(conversion.allMessages)
+            uiThread { view.onMessageLoad() }
+        }
+    }
+
+    override fun loadMoreMessage(userName: String) {
+        doAsync {
+            val conversation = EMClient.getInstance().chatManager().getConversation(userName)
+            val startMsgId = messages[0].msgId
+            val loadMoreMsgFromDB = conversation.loadMoreMsgFromDB(startMsgId, PAGE_SIZE)
+            messages.addAll(0,loadMoreMsgFromDB)
+            uiThread { view.onMoreMessageLoad(loadMoreMsgFromDB.size) }
+        }
     }
 }

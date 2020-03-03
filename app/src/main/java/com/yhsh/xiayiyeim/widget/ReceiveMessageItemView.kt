@@ -51,13 +51,18 @@ import java.util.*
  */
 class ReceiveMessageItemView(context: Context?, attrs: AttributeSet? = null) :
     RelativeLayout(context, attrs) {
-    fun bindView(singleMessage: EMMessage) {
-        updateStamp(singleMessage)
+    fun bindView(singleMessage: EMMessage, showStamp: Boolean) {
+        updateStamp(singleMessage, showStamp)
         updateMessage(singleMessage)
     }
 
-    private fun updateStamp(singleMessage: EMMessage) {
-        timestamp.text = DateUtils.getTimestampString(Date(singleMessage.msgTime))
+    private fun updateStamp(singleMessage: EMMessage, showStamp: Boolean) {
+        if (showStamp) {
+            timestamp.visibility = View.VISIBLE
+            timestamp.text = DateUtils.getTimestampString(Date(singleMessage.msgTime))
+        } else {
+            timestamp.visibility = View.GONE
+        }
     }
 
     private fun updateMessage(singleMessage: EMMessage) {

@@ -43,15 +43,16 @@ import com.hyphenate.chat.EMMessage
 interface ChatContract {
     interface Presenter : BasePresenter {
         fun sendMessage(contact: String, message: String)
-        fun adMessage(
-            userName: String,
-            p0: MutableList<EMMessage>?
-        )
+        fun adMessage(userName: String, p0: MutableList<EMMessage>?)
+        fun loadMessage(userName: String)
+        fun loadMoreMessage(userName: String)
     }
 
     interface View {
         fun onStartSendMessage()
         fun onSendMessageSuccess()
         fun onSendMessageFail()
+        fun onMessageLoad()
+        fun onMoreMessageLoad(size: Int)
     }
 }
