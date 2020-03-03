@@ -1,8 +1,16 @@
 package com.yhsh.xiayiyeim.ui.fragment
 
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.hyphenate.chat.EMClient
+import com.hyphenate.chat.EMConversation
+import com.hyphenate.chat.EMMessage
 import com.yhsh.xiayiyeim.R
-import com.yhsh.xiayiyeim.ui.activity.BaseActivity
+import com.yhsh.xiayiyeim.adapter.ConversationListAdapter
+import com.yhsh.xiayiyeim.adapter.EMMessageListenerAdapter
+import kotlinx.android.synthetic.main.fragment_conversation.*
 import kotlinx.android.synthetic.main.header.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 /*
  * Copyright (c) 2020, smuyyh@gmail.com All Rights Reserved.
@@ -43,13 +51,51 @@ import kotlinx.android.synthetic.main.header.*
  * 文件说明：聊天的页面
  */
 class ConversationFragment : BaseFragment() {
+    private var conversations = mutableListOf<EMConversation>()
+    private val messageListener = object : EMMessageListenerAdapter() {
+        override fun onMessageReceived(p0: MutableList<EMMessage>?) {
+            super.onMessageReceived(p0)
+            //重新加载消息
+            loadConversations()
+        }
+    }
+
     override fun getLayoutResId(): Int = R.layout.fragment_conversation
     override fun init() {
         super.init()
         initHeader()
+        recyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
+            adapter = ConversationListAdapter(context, conversations)
+        }
+        EMClient.getInstance().chatManager().addMessageListener(messageListener)
+        loadConversations()
+    }
+
+    private fun loadConversations() {
+        doAsync {
+            val allConversations = EMClient.getInstance().chatManager().allConversations
+            //添加之前要清空之前的消息
+            conversations.clear()
+            conversations.addAll(allConversations.values)
+            uiThread { recyclerView.adapter?.notifyDataSetChanged() }
+        }
     }
 
     private fun initHeader() {
         headerTitle.text = getString(R.string.message)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //获取焦点的时候再次加载数据
+        loadConversations()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //解绑消息监听
+        EMClient.getInstance().chatManager().removeMessageListener(messageListener)
     }
 }

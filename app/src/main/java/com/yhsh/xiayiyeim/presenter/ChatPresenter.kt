@@ -80,6 +80,8 @@ class ChatPresenter(val view: ChatContract.View) : ChatContract.Presenter {
     override fun loadMessage(userName: String) {
         doAsync {
             val conversion = EMClient.getInstance().chatManager().getConversation(userName)
+            //消息标记为已读
+            conversion.markAllMessagesAsRead()
             messages.addAll(conversion.allMessages)
             uiThread { view.onMessageLoad() }
         }
@@ -90,7 +92,7 @@ class ChatPresenter(val view: ChatContract.View) : ChatContract.Presenter {
             val conversation = EMClient.getInstance().chatManager().getConversation(userName)
             val startMsgId = messages[0].msgId
             val loadMoreMsgFromDB = conversation.loadMoreMsgFromDB(startMsgId, PAGE_SIZE)
-            messages.addAll(0,loadMoreMsgFromDB)
+            messages.addAll(0, loadMoreMsgFromDB)
             uiThread { view.onMoreMessageLoad(loadMoreMsgFromDB.size) }
         }
     }
