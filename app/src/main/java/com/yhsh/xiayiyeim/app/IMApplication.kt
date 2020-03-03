@@ -60,7 +60,7 @@ class IMApplication : Application() {
         lateinit var instance: IMApplication
     }
 
-    lateinit var contentText: String
+    private lateinit var contentText: String
 
     //通过使用SoundPool播放简短音频文件
     private val soundPool = SoundPool(2, AudioManager.STREAM_MUSIC, 0)
@@ -104,16 +104,35 @@ class IMApplication : Application() {
                 pendingIntent =
                     PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
             }
-            val notification =
-                Notification.Builder(this).setContentTitle(getString(R.string.receive_new_message))
-                    .setContentText(contentText)
-                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.avatar1))
-                    //不让滑动移除通知
-                    .setOngoing(false)
-                    //点击后自动消失的方法
+            val notification: Notification
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //兼容Android8.0及以上API26的消息通知栏
+                val mChannel =
+                    NotificationChannel(
+                        getString(R.string.receive_new_message),
+                        contentText,
+                        NotificationManager.IMPORTANCE_LOW
+                    );
+                notificationManager.createNotificationChannel(mChannel);
+                notification = Notification.Builder(this).setContentIntent(pendingIntent)
+                    .setChannelId("通知栏监听音乐")
+                    .setContentTitle(getString(R.string.receive_new_message)).setOngoing(true)
+                    .setWhen(System.currentTimeMillis()).setContentText(contentText)
                     .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.mipmap.ic_contact).notification
+                    .setSmallIcon(R.mipmap.ic_launcher).build();
+            } else {
+                notification =
+                    Notification.Builder(this)
+                        .setContentTitle(getString(R.string.receive_new_message))
+                        .setContentText(contentText)
+                        .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.avatar1))
+                        //不让滑动移除通知
+                        .setOngoing(false)
+                        //点击后自动消失的方法
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.mipmap.ic_contact).notification
+            }
             notificationManager.notify(1, notification)
         }
     }

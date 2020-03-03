@@ -1,11 +1,14 @@
 package com.yhsh.xiayiyeim.ui.activity
 
+import com.hyphenate.EMConnectionListener
+import com.hyphenate.EMError
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMMessage
 import com.yhsh.xiayiyeim.R
 import com.yhsh.xiayiyeim.adapter.EMMessageListenerAdapter
 import com.yhsh.xiayiyeim.factory.FragmentFactory
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 
 class MainActivity : BaseActivity() {
     private val messageListener = object : EMMessageListenerAdapter() {
@@ -26,6 +29,21 @@ class MainActivity : BaseActivity() {
         }
         //初始化接收消息的监听器
         EMClient.getInstance().chatManager().addMessageListener(messageListener)
+        //设置多设备登录冲突的监听
+        EMClient.getInstance().addConnectionListener(object : EMConnectionListener {
+            override fun onConnected() {
+
+            }
+
+            //设备断开了
+            override fun onDisconnected(p0: Int) {
+                if (p0 == EMError.USER_LOGIN_ANOTHER_DEVICE) {
+                    //跳转登录页面重新登录
+                    startActivity<LoginActivity>()
+                    finish()
+                }
+            }
+        })
     }
 
     override fun onResume() {
